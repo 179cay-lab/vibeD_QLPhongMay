@@ -40,6 +40,14 @@ jobs:
             -DBUILD_TESTS=OFF -DBUILD_TOOLS=OFF -DBUILD_PLUGINS=ossl -DCMAKE_INSTALL_PREFIX=/mingw64
           cmake --build /tmp/qca-build
           cmake --install /tmp/qca-build
+      - name: Biên dịch thư viện Interception (khóa bàn phím/chuột)
+        run: |
+          git clone --depth 1 https://github.com/oblitum/Interception.git /tmp/interception
+          cd /tmp/interception/library
+          gcc -shared -O2 -DINTERCEPTION_EXPORT -o interception.dll interception.c -Wl,--out-implib,libinterception.dll.a
+          cp interception.h /mingw64/include/
+          cp interception.dll /mingw64/bin/
+          cp libinterception.dll.a /mingw64/lib/
       - name: Cấu hình
         run: |
           git config --global --add safe.directory '*'
