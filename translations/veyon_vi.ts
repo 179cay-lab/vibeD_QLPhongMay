@@ -5036,4 +5036,51 @@ Ví dụ: [^-]*-(PC[0-9]*)</translation>
         <translation>Không dùng tiện ích mở rộng X Damage</translation>
     </message>
 </context>
+<context>
+    <name>MachineNumberFeaturePlugin</name>
+    <message>
+        <source>Identify the number of each computer by asking its user</source>
+        <translation>Nhận diện số của từng máy bằng cách hỏi người dùng</translation>
+    </message>
+    <message>
+        <source>Identify computer numbers</source>
+        <translation>Nhận diện số máy</translation>
+    </message>
+    <message>
+        <source>Ask the user of each selected computer for the number written on the computer. The computer is then renamed automatically, so cabling order no longer matters.</source>
+        <translation>Hỏi người dùng ở từng máy đã chọn số ghi trên máy. Máy sẽ được tự động đổi tên theo số đó, nên thứ tự cắm dây không còn quan trọng.</translation>
+    </message>
+    <message>
+        <source>Computer %1</source>
+        <translation>Máy %1</translation>
+    </message>
+    <message>
+        <source>Please select the computers to identify first.</source>
+        <translation>Vui lòng chọn các máy cần nhận diện trước.</translation>
+    </message>
+    <message>
+        <source>Ask the users of %1 computer(s) for their computer number?</source>
+        <translation>Hỏi số máy của người dùng ở %1 máy?</translation>
+    </message>
+    <message>
+        <source>Could not assign number %1 to %2: %3</source>
+        <translation>Không thể gán số %1 cho %2: %3</translation>
+    </message>
+    <message>
+        <source>the name "%1" is already used by %2</source>
+        <translation>tên "%1" đã được dùng bởi %2</translation>
+    </message>
+    <message>
+        <source>the computer is not in the built-in directory</source>
+        <translation>máy này không có trong danh bạ tích hợp</translation>
+    </message>
+    <message>
+        <source>Which computer are you?</source>
+        <translation>Bạn là máy số mấy?</translation>
+    </message>
+    <message>
+        <source>Please enter the number written on this computer:</source>
+        <translation>Vui lòng nhập số ghi trên máy này:</translation>
+    </message>
+</context>
 </TS>

@@ -1,0 +1,22 @@
+name: "Build Windows (QLPhongMay)"
+on:
+  workflow_dispatch:
+
+# Dùng đúng image mingw-w64 mà dự án Veyon dùng để build bản Windows (xem .gitlab-ci.yml, job build-windows).
+jobs:
+  build-windows:
+    runs-on: ubuntu-latest
+    container: registry.gitlab.com/veyon/ci-mingw-w64:main
+    strategy:
+      matrix:
+        arch: [x86_64]
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - run: git config --global --add safe.directory $GITHUB_WORKSPACE
+      - run: .ci/windows/build.sh ${{ matrix.arch }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: QLPhongMay-windows-${{ matrix.arch }}
+          path: veyon-*win*
