@@ -17,10 +17,12 @@ function(create_translations name ts_files source_files)
 		set(ts_target "${basename}_ts")
 		set(qm_target "${basename}_qm")
 		set(qm_file "${CMAKE_CURRENT_BINARY_DIR}/${basename}.qm")
-		add_custom_command(OUTPUT ${ts_file}
-			COMMAND Qt${QT_MAJOR_VERSION}::lupdate -locations none -no-obsolete ${source_files} -ts ${ts_file}
-			DEPENDS ${source_files})
-		add_custom_target(${ts_target} DEPENDS ${ts_file})
+		if(WITH_TRANSLATIONS_UPDATE)
+			add_custom_command(OUTPUT ${ts_file}
+				COMMAND Qt${QT_MAJOR_VERSION}::lupdate -locations none -no-obsolete ${source_files} -ts ${ts_file}
+				DEPENDS ${source_files})
+			add_custom_target(${ts_target} DEPENDS ${ts_file})
+		endif()
 		# add command and target for generating/updating QM file if TS file is newer or no QM file exists yet
 		add_custom_command(OUTPUT ${qm_file}
 			COMMAND Qt${QT_MAJOR_VERSION}::lrelease ${ts_file} -qm ${qm_file}
