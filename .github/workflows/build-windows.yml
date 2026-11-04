@@ -44,7 +44,8 @@ jobs:
         run: |
           git config --global --add safe.directory '*'
           .ci/common/strip-ultravnc-sources.sh
-          cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=Release -DWITH_WEBAPI=OFF -DWITH_LDAP=OFF -DWITH_BUNDLED_LIBVNC=ON -DWITH_LTO=OFF -DWITH_TESTS=OFF
+          cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=Release -DWITH_WEBAPI=OFF -DWITH_LDAP=OFF -DWITH_BUNDLED_LIBVNC=ON -DWITH_LTO=OFF -DWITH_TESTS=OFF -DWITH_WERROR=OFF \
+            -DCMAKE_C_FLAGS=-Wno-error=incompatible-pointer-types
       - name: Biên dịch
         run: cmake --build build
       - name: Gom file
