@@ -2,21 +2,67 @@ name: "Build Windows (QLPhongMay)"
 on:
   workflow_dispatch:
 
-# Dùng đúng image mingw-w64 mà dự án Veyon dùng để build bản Windows (xem .gitlab-ci.yml, job build-windows).
+# Build bản Windows bằng MSYS2/MinGW-w64 ngay trên runner Windows của GitHub
+# (image mingw của Veyon nằm trên GitLab riêng nên không dùng được từ đây).
 jobs:
   build-windows:
-    runs-on: ubuntu-latest
-    container: registry.gitlab.com/veyon/ci-mingw-w64:main
-    strategy:
-      matrix:
-        arch: [x86_64]
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
     steps:
       - uses: actions/checkout@v6
         with:
           submodules: recursive
-      - run: git config --global --add safe.directory $GITHUB_WORKSPACE
-      - run: .ci/windows/build.sh ${{ matrix.arch }}
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            git zip
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-qt6-base
+            mingw-w64-x86_64-qt6-tools
+            mingw-w64-x86_64-qt6-declarative
+            mingw-w64-x86_64-qt6-5compat
+            mingw-w64-x86_64-qt6-websockets
+            mingw-w64-x86_64-qca-qt6
+            mingw-w64-x86_64-openssl
+            mingw-w64-x86_64-lzo2
+            mingw-w64-x86_64-libpng
+            mingw-w64-x86_64-libjpeg-turbo
+            mingw-w64-x86_64-zlib
+            mingw-w64-x86_64-libvncserver
+            mingw-w64-x86_64-cyrus-sasl
+            mingw-w64-x86_64-openldap
+      - name: Cấu hình
+        run: |
+          git config --global --add safe.directory '*'
+          .ci/common/strip-ultravnc-sources.sh
+          cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=Release -DWITH_WEBAPI=OFF -DWITH_LTO=OFF -DWITH_TESTS=OFF
+      - name: Biên dịch
+        run: cmake --build build
+      - name: Gom file
+        run: |
+          D=QLPhongMay-win64
+          mkdir -p $D/plugins $D/translations
+          cp build/core/veyon-core.dll $D/
+          find build -mindepth 2 -name 'veyon-*.exe' -exec cp '{}' $D/ \;
+          find build/plugins -name '*.dll' -exec cp '{}' $D/plugins/ \;
+          cp build/translations/*.qm $D/translations/ || true
+          # kéo theo mọi DLL phụ thuộc nằm trong /mingw64
+          for f in $D/*.exe $D/*.dll $D/plugins/*.dll; do
+            ldd "$f" | awk '/mingw64/ {print $3}'
+          done | sort -u | while read -r dll; do cp -n "$dll" $D/; done
+          # plugin Qt cần thiết
+          for p in platforms/qwindows.dll styles/qmodernwindowsstyle.dll imageformats/qjpeg.dll; do
+            mkdir -p $D/$(dirname $p); cp /mingw64/share/qt6/plugins/$p $D/$p || cp /mingw64/lib/qt6/plugins/$p $D/$p
+          done
+          ls -R $D | head -100
+          zip -r $D.zip $D
       - uses: actions/upload-artifact@v4
         with:
-          name: QLPhongMay-windows-${{ matrix.arch }}
-          path: veyon-*win*
+          name: QLPhongMay-windows-x64
+          path: QLPhongMay-win64.zip
