@@ -72,6 +72,30 @@ jobs:
           for p in platforms/qwindows.dll styles/qmodernwindowsstyle.dll imageformats/qjpeg.dll; do
             mkdir -p $D/$(dirname $p); cp /mingw64/share/qt6/plugins/$p $D/$p || cp /mingw64/lib/qt6/plugins/$p $D/$p
           done
+          # plugin mật mã của QCA (bắt buộc cho xác thực bằng khóa)
+          mkdir -p $D/crypto
+          find /mingw64 -name 'libqca-ossl*.dll' -exec cp '{}' $D/crypto/ \;
+          # trình điều khiển khóa bàn phím/chuột và engine chụp màn hình đi kèm trong repo
+          mkdir -p $D/interception
+          cp 3rdparty/interception/* $D/interception/
+          cp 3rdparty/ddengine/ddengine64.dll $D/
+          cat > $D/HUONG-DAN.txt <<'TXT'
+QLPhongMay (Veyon Việt hóa + nhận diện số máy) - bản Windows 64-bit, chạy trực tiếp từ thư mục này.
+
+MÁY GIÁO VIÊN
+  1. Chạy veyon-configurator.exe (chuột phải > Run as administrator).
+  2. Mục Xác thực: tạo cặp khóa (ví dụ tên "teacher"), xuất khóa công khai.
+  3. Mục Danh bạ: thêm phòng và nhập danh sách IP các máy (có thể nhập CSV).
+  4. Chạy veyon-master.exe để giám sát. Tính năng "Nhận diện số máy" nằm trên thanh công cụ.
+
+MÁY HỌC SINH
+  1. Chép nguyên thư mục này sang máy học sinh.
+  2. Chạy veyon-configurator.exe (Run as administrator), nhập khóa công khai của giáo viên (mục Xác thực), rồi
+     ở mục Dịch vụ bấm "Đăng ký dịch vụ Veyon" và "Khởi động dịch vụ".
+  3. Cho phép cổng 11100 trong tường lửa nếu được hỏi.
+
+Chạy bằng dòng lệnh: veyon-cli.exe help
+TXT
           ls -R $D | head -100
           zip -r $D.zip $D
       - uses: actions/upload-artifact@v4
