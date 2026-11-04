@@ -1,6 +1,6 @@
-node_modules
-dist
-target
-src-tauri/gen
-*.log
+.vagrant/*
 .DS_Store
+svg
+Makefile
+plugins/addons
+plugins/extra
