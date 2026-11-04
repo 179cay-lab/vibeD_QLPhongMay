@@ -1,6 +1,7 @@
 include(BuildVeyonPlugin)
 
 build_veyon_plugin(machinenumber
+	NAME MachineNumber
 	SOURCES
 	MachineNumberFeaturePlugin.cpp
 	MachineNumberFeaturePlugin.h
