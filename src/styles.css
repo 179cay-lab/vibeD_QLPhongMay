@@ -43,3 +43,16 @@ td.empty { text-align: center; color: var(--muted); padding: 24px; }
 .tile { width: 96px; padding: 8px; background: #fff; border: 2px solid var(--border); border-radius: 8px; display: flex; flex-direction: column; align-items: center; }
 .tile b { font-size: 18px; } .tile small { color: var(--muted); font-size: 11px; }
 .tile.ok { border-color: var(--primary); background: #eff6ff; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; }
+.stat b { font-size: 30px; color: var(--primary); } .stat span { color: var(--muted); font-size: 13px; }
+.stat.ok b { color: var(--ok); } .stat.warn b { color: #d97706; }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 4px; }
+.step { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--border); border-radius: 10px; padding: 12px 16px; }
+.step.done { border-left-color: var(--ok); } .step h3 { margin: 0 0 6px; font-size: 15px; } .step p { margin: 0 0 8px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+label.inline { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--muted); } label.inline input { width: 130px; }
+.maprow { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.maplabel { width: 64px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.seat { width: 38px; height: 34px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; background: #e2e8f0; color: #475569; }
+.seat.ok { background: var(--primary); color: #fff; }
+.legend { color: var(--muted); font-size: 13px; margin: 0 0 10px; } .dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; background: #e2e8f0; margin: 0 4px 0 12px; } .dot.ok { background: var(--primary); margin-left: 0; }

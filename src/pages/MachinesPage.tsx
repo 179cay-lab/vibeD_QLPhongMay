@@ -42,16 +42,6 @@ export default function MachinesPage() {
       commit(rows, machines.filter((x) => x.id !== m.id), { action: 'Xoá máy', detail: `${m.number} ${m.name}` })
   }
 
-  const seed = () => {
-    if (machines.length && !confirm('Thay toàn bộ danh sách hiện tại bằng 40 máy mẫu?')) return
-    const rs = [1, 2, 3, 4].map((i) => ({ id: newId(), name: `Dãy ${i}` }))
-    const ms: Machine[] = Array.from({ length: 40 }, (_, i) => ({
-      id: newId(), number: i + 1, name: `PC-${String(i + 1).padStart(2, '0')}`, ip: '',
-      rowId: rs[Math.floor(i / 10)].id, seat: (i % 10) + 1, enrolled: false,
-    }))
-    commit(rs, ms, { action: 'Tạo dữ liệu mẫu', detail: '4 dãy, 40 máy' })
-  }
-
   const exportCsv = () => {
     const url = URL.createObjectURL(new Blob([machinesToCsv(machines, rows)], { type: 'text/csv;charset=utf-8' }))
     const a = document.createElement('a')
@@ -72,7 +62,6 @@ export default function MachinesPage() {
       <h2>Máy tính <small>({machines.length})</small></h2>
       <div className="toolbar">
         <button className="primary" onClick={openNew}>Thêm máy</button>
-        <button onClick={seed}>Tạo 40 máy mẫu</button>
         <button onClick={() => fileRef.current?.click()}>Nhập CSV</button>
         <button onClick={exportCsv} disabled={!machines.length}>Xuất CSV</button>
         <input ref={fileRef} type="file" accept=".csv,text/csv" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) onImport(f); e.target.value = '' }} />
@@ -88,7 +77,7 @@ export default function MachinesPage() {
               <td className="actions"><button onClick={() => openEdit(m)}>Sửa</button><button className="danger" onClick={() => remove(m)}>Xoá</button></td>
             </tr>
           ))}
-          {machines.length === 0 && <tr><td colSpan={7} className="empty">Chưa có máy nào. Bấm "Thêm máy" hoặc "Tạo 40 máy mẫu".</td></tr>}
+          {machines.length === 0 && <tr><td colSpan={7} className="empty">Chưa có máy nào. Vào "Tổng quan" để dựng phòng máy nhanh, hoặc bấm "Thêm máy".</td></tr>}
         </tbody>
       </table>
 
