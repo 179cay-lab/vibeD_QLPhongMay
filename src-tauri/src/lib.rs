@@ -42,6 +42,14 @@ pub fn run() {
             std::fs::create_dir_all(&dir)?;
             let conn = Connection::open(dir.join("qlphongmay.db"))?;
             db::init(&conn)?;
+            // Máy chủ nhận agent + trang đăng ký số máy chạy nền cùng ứng dụng.
+            let cfg = qlpm_core::Config { port: qlpm_core::DEFAULT_PORT, data_dir: Some(dir.clone()) };
+            std::thread::spawn(move || {
+                let rt = tokio::runtime::Runtime::new().expect("không tạo được tokio runtime");
+                if let Err(e) = rt.block_on(qlpm_core::run(cfg)) {
+                    eprintln!("máy chủ QLPhongMay lỗi: {e}");
+                }
+            });
             app.manage(Db(Mutex::new(conn)));
             Ok(())
         })

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { isTauri } from './backend'
 import { useStore } from './store'
 import HomePage from './pages/HomePage'
+import MonitorPage from './pages/MonitorPage'
 import EnrollPage from './pages/EnrollPage'
 import LogsPage from './pages/LogsPage'
 import MachinesPage from './pages/MachinesPage'
@@ -9,6 +10,7 @@ import RowsPage from './pages/RowsPage'
 
 const TABS: { id: string; label: string; el: (go: (t: string) => void) => JSX.Element }[] = [
   { id: 'home', label: 'Tổng quan', el: (go) => <HomePage go={go} /> },
+  { id: 'monitor', label: 'Giám sát', el: () => <MonitorPage /> },
   { id: 'machines', label: 'Máy tính', el: () => <MachinesPage /> },
   { id: 'rows', label: 'Dãy máy', el: () => <RowsPage /> },
   { id: 'enroll', label: 'Đăng ký số máy', el: () => <EnrollPage /> },

@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { planEnroll } from '../enroll'
+import { useMonitor } from '../monitor'
 import { useStore } from '../store'
 import type { Machine } from '../types'
 
 export default function EnrollPage() {
   const { rows, machines, commit } = useStore()
-  const [active, setActive] = useState(false)
+  const mon = useMonitor()
+  const [localActive, setActive] = useState(false)
+  const active = mon.connected ? mon.enrollOn : localActive
   const [num, setNum] = useState('')
   const [ip, setIp] = useState('')
   const [err, setErr] = useState('')
@@ -17,6 +20,12 @@ export default function EnrollPage() {
     const next = !active
     if (next && machines.length && !confirm('Bắt đầu đăng ký? Máy nào bấm sau sẽ ghi đè IP đã đăng ký (sau khi bạn xác nhận).')) return
     setActive(next)
+    mon.setEnrollMode(next)
+    if (next) {
+      // Bắt các máy đã có agent mà chưa đăng ký tự mở trang "Bạn là máy số mấy?"
+      const done = new Set(machines.filter((m) => m.enrolled).map((m) => m.ip))
+      mon.command(Object.keys(mon.agents).filter((ip) => !done.has(ip)), 'open_enroll')
+    }
     await commit(rows, machines, { action: next ? 'Bắt đầu đăng ký số máy' : 'Kết thúc đăng ký số máy', detail: `${done}/${machines.length} máy đã đăng ký` })
   }
 
@@ -50,8 +59,11 @@ export default function EnrollPage() {
       <h2>Đăng ký số máy</h2>
       <p className="hint">
         Mỗi máy học sinh hiện màn hình "Bạn là máy số mấy?" và bấm nút. Máy chủ ghi lại IP LAN gửi tới và gán IP đó cho đúng số máy,
-        nên cắm dây lộn xộn cũng không ảnh hưởng. <b>Chế độ Demo:</b> thao tác của máy học sinh được giả lập ở khung bên dưới.
+        nên cắm dây lộn xộn cũng không ảnh hưởng. Máy đã cài agent sẽ tự mở trang này khi bạn bấm "Bắt đầu đăng ký".
       </p>
+      {mon.connected && mon.info?.lan_ip && (
+        <p className="hint">Máy chưa có agent: mở trình duyệt vào <code>http://{mon.info.lan_ip}:{mon.info.port}/enroll</code></p>
+      )}
       <div className="toolbar">
         <button className={active ? 'danger' : 'primary'} onClick={toggle}>{active ? 'Kết thúc đăng ký' : 'Bắt đầu đăng ký'}</button>
         <button onClick={resetAll} disabled={!done}>Đặt lại</button>
@@ -62,7 +74,7 @@ export default function EnrollPage() {
       <p><b>{done}/{machines.length}</b> máy đã đăng ký ({pct}%)</p>
 
       <div className="panel">
-        <h3>Giả lập máy học sinh bấm nút</h3>
+        <h3>Giả lập máy học sinh bấm nút (thử không cần máy thật)</h3>
         <div className="toolbar">
           <input type="number" min={1} placeholder="Số máy" value={num} onChange={(e) => setNum(e.target.value)} disabled={!active} />
           <input placeholder="IP LAN, ví dụ 192.168.1.105" value={ip} onChange={(e) => setIp(e.target.value)} disabled={!active} />
