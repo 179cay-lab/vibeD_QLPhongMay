@@ -28,20 +28,23 @@ jobs:
             mingw-w64-x86_64-qt6-declarative
             mingw-w64-x86_64-qt6-5compat
             mingw-w64-x86_64-qt6-websockets
-            mingw-w64-x86_64-qca-qt6
             mingw-w64-x86_64-openssl
             mingw-w64-x86_64-lzo2
             mingw-w64-x86_64-libpng
             mingw-w64-x86_64-libjpeg-turbo
             mingw-w64-x86_64-zlib
-            mingw-w64-x86_64-libvncserver
-            mingw-w64-x86_64-cyrus-sasl
-            mingw-w64-x86_64-openldap
+      - name: Biên dịch QCA (Qt6) từ mã nguồn
+        run: |
+          git clone --depth 1 --branch v2.3.10 https://github.com/KDE/qca.git /tmp/qca
+          cmake -G Ninja -S /tmp/qca -B /tmp/qca-build -DCMAKE_BUILD_TYPE=Release -DBUILD_WITH_QT6=ON \
+            -DBUILD_TESTS=OFF -DBUILD_TOOLS=OFF -DBUILD_PLUGINS=ossl -DCMAKE_INSTALL_PREFIX=/mingw64
+          cmake --build /tmp/qca-build
+          cmake --install /tmp/qca-build
       - name: Cấu hình
         run: |
           git config --global --add safe.directory '*'
           .ci/common/strip-ultravnc-sources.sh
-          cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=Release -DWITH_WEBAPI=OFF -DWITH_LTO=OFF -DWITH_TESTS=OFF
+          cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=Release -DWITH_WEBAPI=OFF -DWITH_LDAP=OFF -DWITH_BUNDLED_LIBVNC=ON -DWITH_LTO=OFF -DWITH_TESTS=OFF
       - name: Biên dịch
         run: cmake --build build
       - name: Gom file
